@@ -13,7 +13,9 @@ import com.example.mob_final_app.viewmodel.CarViewModel
 
 sealed class Screen(val route: String) {
     object MainMenu : Screen("main_menu")
-    object CarList : Screen("car_list")
+    object CarList : Screen("car_list/{category}") {
+        fun createRoute(category: String) = "car_list/$category"
+    }
     object CarDetail : Screen("car_detail/{carId}") {
         fun createRoute(carId: Int) = "car_detail/$carId"
     }
@@ -27,12 +29,19 @@ fun NavGraph(navController: NavHostController, viewModel: CarViewModel) {
     ) {
         composable(Screen.MainMenu.route) {
             MainMenuScreen(
-                onViewCarsClick = { navController.navigate(Screen.CarList.route) }
+                onCategoryClick = { category ->
+                    navController.navigate(Screen.CarList.createRoute(category))
+                }
             )
         }
-        composable(Screen.CarList.route) {
+        composable(
+            route = Screen.CarList.route,
+            arguments = listOf(navArgument("category") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val category = backStackEntry.arguments?.getString("category") ?: "All"
             CarListScreen(
                 viewModel = viewModel,
+                initialCategory = category,
                 onCarClick = { carId ->
                     navController.navigate(Screen.CarDetail.createRoute(carId))
                 },

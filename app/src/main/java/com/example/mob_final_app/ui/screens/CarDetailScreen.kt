@@ -1,16 +1,18 @@
 package com.example.mob_final_app.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mob_final_app.R
 import com.example.mob_final_app.data.model.Car
+import com.example.mob_final_app.ui.theme.AppGradient
 import com.example.mob_final_app.viewmodel.CarViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,22 +38,28 @@ fun CarDetailScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = car?.let { "${it.brand} ${it.model}" } ?: "Loading...") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+        containerColor = Color.Transparent,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppGradient),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onBackClick,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }
         }
     ) { padding ->
         car?.let { carDetails ->
             val context = LocalContext.current
-            val imageResId = if (carDetails.imageUrl.isNotEmpty()) {
-                context.resources.getIdentifier(carDetails.imageUrl, "drawable", context.packageName)
-            } else 0
+            val imageResId = remember(carDetails.imageUrl) {
+                if (carDetails.imageUrl.isNotEmpty()) {
+                    context.resources.getIdentifier(carDetails.imageUrl, "drawable", context.packageName)
+                } else 0
+            }
 
             Column(
                 modifier = Modifier
@@ -59,6 +68,14 @@ fun CarDetailScreen(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
+                Text(
+                    text = "${carDetails.brand} ${carDetails.model}",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
                 if (imageResId != 0) {
                     Image(
                         painter = painterResource(id = imageResId),
@@ -87,11 +104,12 @@ fun CarDetailScreen(
                     text = "Description",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = Color.White
                 )
                 Text(
                     text = carDetails.description,
                     fontSize = 16.sp,
+                    color = Color.White,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -107,8 +125,8 @@ fun DetailItem(label: String, value: String) {
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = label, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.secondary)
-        Text(text = value)
+        Text(text = label, fontWeight = FontWeight.SemiBold, color = Color.White)
+        Text(text = value, color = Color.White)
     }
-    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), thickness = 0.5.dp)
+    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), thickness = 0.5.dp, color = Color.White.copy(alpha = 0.2f))
 }

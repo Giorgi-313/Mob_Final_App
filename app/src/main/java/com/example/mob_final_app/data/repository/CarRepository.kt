@@ -11,11 +11,23 @@ class CarRepository(private val carDao: CarDao) {
         return carDao.getCarById(id)
     }
 
+    fun getCarsByMinHorsepower(minHp: Int): Flow<List<Car>> {
+        return carDao.getCarsByMinHorsepower(minHp)
+    }
+
+    fun getCarsByCategoryAndMinHorsepower(category: String, minHp: Int): Flow<List<Car>> {
+        return carDao.getCarsByCategoryAndMinHorsepower(category, minHp)
+    }
+
     suspend fun insert(car: Car) {
         carDao.insertCar(car)
     }
 
     suspend fun insertAll(cars: List<Car>) {
         carDao.insertAll(cars)
+    }
+
+    suspend fun deleteAll() {
+        carDao.deleteAll()
     }
 }

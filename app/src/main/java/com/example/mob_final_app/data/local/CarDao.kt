@@ -18,6 +18,15 @@ interface CarDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(cars: List<Car>)
 
+    @Query("DELETE FROM cars")
+    suspend fun deleteAll()
+
+    @Query("SELECT * FROM cars WHERE horsepower >= :minHp")
+    fun getCarsByMinHorsepower(minHp: Int): Flow<List<Car>>
+
+    @Query("SELECT * FROM cars WHERE category = :category AND horsepower >= :minHp")
+    fun getCarsByCategoryAndMinHorsepower(category: String, minHp: Int): Flow<List<Car>>
+
     @Delete
     suspend fun deleteCar(car: Car)
 }

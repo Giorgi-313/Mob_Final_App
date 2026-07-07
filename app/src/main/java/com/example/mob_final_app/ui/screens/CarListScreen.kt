@@ -1,18 +1,20 @@
 package com.example.mob_final_app.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -20,23 +22,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mob_final_app.data.model.Car
+import com.example.mob_final_app.ui.theme.AppGradient
 import com.example.mob_final_app.viewmodel.CarViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CarListScreen(
     viewModel: CarViewModel,
+    initialCategory: String = "All",
     onCarClick: (Int) -> Unit,
     onBackClick: () -> Unit
 ) {
     val cars by viewModel.allCars.collectAsState()
-    var selectedCategory by remember { mutableStateOf("All") }
-    val categories = listOf("All", "Gas", "Hybrid", "Electric")
+    val minHp by viewModel.minHorsepower.collectAsState()
+    val selectedCategory by remember { mutableStateOf(initialCategory) }
 
-    val filteredCars = if (selectedCategory == "All") {
-        cars
-    } else {
-        cars.filter { it.category == selectedCategory }
+    val filteredCars = cars.filter { car ->
+        (selectedCategory == "All" || car.category == selectedCategory) &&
+                car.horsepower >= minHp
     }
 
     // Pre-populate data if list is empty
@@ -47,31 +50,65 @@ fun CarListScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Car Catalog") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+        containerColor = Color.Transparent,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppGradient),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onBackClick,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
-            ScrollableTabRow(
-                selectedTabIndex = categories.indexOf(selectedCategory),
-                edgePadding = 16.dp,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.primary
+            Text(
+                text = if (selectedCategory == "All") "All Cars" else "$selectedCategory Cars",
+                fontSize = 36.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White,
+                modifier = Modifier.padding(start = 24.dp, top = 32.dp, end = 24.dp, bottom = 8.dp)
+            )
+
+            // Horsepower Filter
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .fillMaxWidth()
             ) {
-                categories.forEach { category ->
-                    Tab(
-                        selected = selectedCategory == category,
-                        onClick = { selectedCategory = category },
-                        text = { Text(category) }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Min Horsepower",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "$minHp HP",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
+                Slider(
+                    value = minHp.toFloat(),
+                    onValueChange = { viewModel.setMinHorsepower(it.toInt()) },
+                    valueRange = 0f..2000f,
+                    steps = 20,
+                    colors = SliderDefaults.colors(
+                        thumbColor = MaterialTheme.colorScheme.primary,
+                        activeTrackColor = MaterialTheme.colorScheme.primary,
+                        inactiveTrackColor = Color.White.copy(alpha = 0.24f)
+                    )
+                )
             }
 
             LazyColumn(
@@ -90,19 +127,25 @@ fun CarListScreen(
 @Composable
 fun CarItem(car: Car, onClick: () -> Unit) {
     val context = LocalContext.current
-    val imageResId = if (car.imageUrl.isNotEmpty()) {
-        context.resources.getIdentifier(car.imageUrl, "drawable", context.packageName)
-    } else 0
+    val imageResId = remember(car.imageUrl) {
+        if (car.imageUrl.isNotEmpty()) {
+            context.resources.getIdentifier(car.imageUrl, "drawable", context.packageName)
+        } else 0
+    }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (imageResId != 0) {
@@ -121,18 +164,20 @@ fun CarItem(car: Car, onClick: () -> Unit) {
                 Text(
                     text = "${car.brand} ${car.model}",
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
                 Text(
-                    text = "Year: ${car.year}",
+                    text = "Year: ${car.year} | ${car.horsepower} HP",
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = Color.White
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = car.engine,
                     fontSize = 12.sp,
-                    maxLines = 1
+                    maxLines = 1,
+                    color = Color.White
                 )
             }
         }

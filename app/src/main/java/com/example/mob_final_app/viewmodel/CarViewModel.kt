@@ -5,12 +5,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.mob_final_app.data.model.Car
 import com.example.mob_final_app.data.repository.CarRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CarViewModel(private val repository: CarRepository) : ViewModel() {
+
+    private val _minHorsepower = MutableStateFlow(0)
+    val minHorsepower: StateFlow<Int> = _minHorsepower.asStateFlow()
+
+    fun setMinHorsepower(hp: Int) {
+        _minHorsepower.value = hp
+    }
 
     val allCars: StateFlow<List<Car>> = repository.allCars.stateIn(
         scope = viewModelScope,
@@ -45,24 +54,25 @@ class CarViewModel(private val repository: CarRepository) : ViewModel() {
                 Car(brand = "Dodge", model = "Challenger SRT Hellcat", year = 2023, engine = "6.2L Supercharged V8", horsepower = 717, transmission = "8-speed Automatic", description = "Pure American muscle with overwhelming power.", category = "Gas", fuelEfficiency = "13/22 MPG", imageUrl = "challengersrt"),
                 
                 // Hybrid Cars
-                Car(brand = "Toyota", model = "Prius", year = 2024, engine = "2.0L Hybrid", horsepower = 194, transmission = "eCVT", description = "The efficiency king gets a stylish new look.", category = "Hybrid", fuelEfficiency = "57/56 MPG"),
-                Car(brand = "Honda", model = "Accord Hybrid", year = 2024, engine = "2.0L Hybrid", horsepower = 204, transmission = "eCVT", description = "A sophisticated sedan with impressive fuel economy.", category = "Hybrid", fuelEfficiency = "51/44 MPG"),
-                Car(brand = "BMW", model = "XM", year = 2024, engine = "4.4L V8 Plug-in Hybrid", horsepower = 644, transmission = "8-speed Automatic", description = "A high-performance luxury SUV with hybrid power.", category = "Hybrid", fuelEfficiency = "46 MPGe"),
-                Car(brand = "McLaren", model = "Artura", year = 2024, engine = "3.0L V6 Hybrid", horsepower = 671, transmission = "8-speed Dual-Clutch", description = "The next generation of supercar performance.", category = "Hybrid", fuelEfficiency = "39 MPGe"),
-                Car(brand = "Ferrari", model = "296 GTB", year = 2024, engine = "2.9L V6 Hybrid", horsepower = 818, transmission = "8-speed Dual-Clutch", description = "Defining the concept of fun to drive with hybrid technology.", category = "Hybrid", fuelEfficiency = "47 MPGe"),
-                Car(brand = "Lexus", model = "LC 500h", year = 2024, engine = "3.5L V6 Hybrid", horsepower = 354, transmission = "Multi-stage Hybrid", description = "Exquisite design meets advanced hybrid efficiency.", category = "Hybrid", fuelEfficiency = "26/33 MPG"),
-                Car(brand = "Porsche", model = "Cayenne E-Hybrid", year = 2024, engine = "3.0L V6 Hybrid", horsepower = 463, transmission = "8-speed Automatic", description = "Versatile luxury SUV with plug-in hybrid performance.", category = "Hybrid", fuelEfficiency = "47 MPGe"),
+                Car(brand = "Toyota", model = "Prius", year = 2024, engine = "2.0L Hybrid", horsepower = 194, transmission = "eCVT", description = "The efficiency king gets a stylish new look.", category = "Hybrid", fuelEfficiency = "57/56 MPG", imageUrl = "prius"),
+                Car(brand = "Honda", model = "Accord Hybrid", year = 2024, engine = "2.0L Hybrid", horsepower = 204, transmission = "eCVT", description = "A sophisticated sedan with impressive fuel economy.", category = "Hybrid", fuelEfficiency = "51/44 MPG", imageUrl = "accord"),
+                Car(brand = "BMW", model = "XM", year = 2024, engine = "4.4L V8 Plug-in Hybrid", horsepower = 644, transmission = "8-speed Automatic", description = "A high-performance luxury SUV with hybrid power.", category = "Hybrid", fuelEfficiency = "46 MPGe", imageUrl = "xm"),
+                Car(brand = "McLaren", model = "Artura", year = 2024, engine = "3.0L V6 Hybrid", horsepower = 671, transmission = "8-speed Dual-Clutch", description = "The next generation of supercar performance.", category = "Hybrid", fuelEfficiency = "39 MPGe", imageUrl = "artura"),
+                Car(brand = "Ferrari", model = "296 GTB", year = 2024, engine = "2.9L V6 Hybrid", horsepower = 818, transmission = "8-speed Dual-Clutch", description = "Defining the concept of fun to drive with hybrid technology.", category = "Hybrid", fuelEfficiency = "47 MPGe", imageUrl = "ferrari296gtb"),
+                Car(brand = "Lexus", model = "LC 500h", year = 2024, engine = "3.5L V6 Hybrid", horsepower = 354, transmission = "Multi-stage Hybrid", description = "Exquisite design meets advanced hybrid efficiency.", category = "Hybrid", fuelEfficiency = "26/33 MPG", imageUrl = "lc500h"),
+                Car(brand = "Porsche", model = "Cayenne E-Hybrid", year = 2024, engine = "3.0L V6 Hybrid", horsepower = 463, transmission = "8-speed Automatic", description = "Versatile luxury SUV with plug-in hybrid performance.", category = "Hybrid", fuelEfficiency = "47 MPGe", imageUrl = "cayenne"),
 
                 // Electric Cars
-                Car(brand = "Tesla", model = "Model S Plaid", year = 2024, engine = "Tri-Motor Electric", horsepower = 1020, transmission = "Single-speed", description = "Blistering acceleration and cutting-edge tech.", category = "Electric", fuelEfficiency = "102 MPGe"),
-                Car(brand = "Porsche", model = "Taycan Turbo S", year = 2024, engine = "Dual Electric Motors", horsepower = 750, transmission = "2-speed Automatic", description = "The electric sports car that sets new standards.", category = "Electric", fuelEfficiency = "70 MPGe"),
-                Car(brand = "Hyundai", model = "IONIQ 6", year = 2024, engine = "Electric Motor", horsepower = 320, transmission = "Single-speed", description = "Ultra-streamlined design with exceptional range.", category = "Electric", fuelEfficiency = "140 MPGe"),
-                Car(brand = "Rivian", model = "R1T", year = 2024, engine = "Quad-Motor Electric", horsepower = 835, transmission = "Single-speed", description = "The electric truck ready for any adventure.", category = "Electric", fuelEfficiency = "70 MPGe"),
-                Car(brand = "Audi", model = "e-tron GT", year = 2024, engine = "Dual Electric Motors", horsepower = 637, transmission = "2-speed Automatic", description = "Electric performance meets Audi luxury.", category = "Electric", fuelEfficiency = "85 MPGe"),
-                Car(brand = "Lucid", model = "Air Sapphire", year = 2024, engine = "Tri-Motor Electric", horsepower = 1234, transmission = "Single-speed", description = "The pinnacle of electric luxury and performance.", category = "Electric", fuelEfficiency = "105 MPGe"),
-                Car(brand = "Rimac", model = "Nevera", year = 2024, engine = "Quad Electric Motors", horsepower = 1914, transmission = "Single-speed", description = "The world's fastest accelerating production car.", category = "Electric", fuelEfficiency = "53 MPGe"),
-                Car(brand = "Ford", model = "F-150 Lightning", year = 2024, engine = "Dual Electric Motors", horsepower = 580, transmission = "Single-speed", description = "America's favorite truck, now fully electric.", category = "Electric", fuelEfficiency = "68 MPGe")
+                Car(brand = "Tesla", model = "Model S Plaid", year = 2024, engine = "Tri-Motor Electric", horsepower = 1020, transmission = "Single-speed", description = "Blistering acceleration and cutting-edge tech.", category = "Electric", fuelEfficiency = "102 MPGe", imageUrl = "modelsplaid"),
+                Car(brand = "Porsche", model = "Taycan Turbo S", year = 2024, engine = "Dual Electric Motors", horsepower = 750, transmission = "2-speed Automatic", description = "The electric sports car that sets new standards.", category = "Electric", fuelEfficiency = "70 MPGe", imageUrl = "tycanturbos"),
+                Car(brand = "Hyundai", model = "IONIQ 6", year = 2024, engine = "Electric Motor", horsepower = 320, transmission = "Single-speed", description = "Ultra-streamlined design with exceptional range.", category = "Electric", fuelEfficiency = "140 MPGe", imageUrl = "ioniq6"),
+                Car(brand = "Rivian", model = "R1T", year = 2024, engine = "Quad-Motor Electric", horsepower = 835, transmission = "Single-speed", description = "The electric truck ready for any adventure.", category = "Electric", fuelEfficiency = "70 MPGe", imageUrl = "rivianr1t"),
+                Car(brand = "Audi", model = "e-tron GT", year = 2024, engine = "Dual Electric Motors", horsepower = 637, transmission = "2-speed Automatic", description = "Electric performance meets Audi luxury.", category = "Electric", fuelEfficiency = "85 MPGe", imageUrl = "etrongt"),
+                Car(brand = "Lucid", model = "Air Sapphire", year = 2024, engine = "Tri-Motor Electric", horsepower = 1234, transmission = "Single-speed", description = "The pinnacle of electric luxury and performance.", category = "Electric", fuelEfficiency = "105 MPGe", imageUrl = "airsapphire"),
+                Car(brand = "Rimac", model = "Nevera", year = 2024, engine = "Quad Electric Motors", horsepower = 1914, transmission = "Single-speed", description = "The world's fastest accelerating production car.", category = "Electric", fuelEfficiency = "53 MPGe", imageUrl = "nevera"),
+                Car(brand = "Ford", model = "F-150 Lightning", year = 2024, engine = "Dual Electric Motors", horsepower = 580, transmission = "Single-speed", description = "America's favorite truck, now fully electric.", category = "Electric", fuelEfficiency = "68 MPGe", imageUrl = "f150")
             )
+            repository.deleteAll()
             repository.insertAll(sampleCars)
         }
     }
