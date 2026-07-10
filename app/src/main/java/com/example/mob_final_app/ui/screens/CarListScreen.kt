@@ -17,10 +17,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mob_final_app.R
 import com.example.mob_final_app.data.model.Car
 import com.example.mob_final_app.ui.theme.AppGradient
 import com.example.mob_final_app.viewmodel.CarViewModel
@@ -104,10 +106,20 @@ fun CarListScreen(
                     valueRange = 0f..2000f,
                     steps = 20,
                     colors = SliderDefaults.colors(
-                        thumbColor = MaterialTheme.colorScheme.primary,
                         activeTrackColor = MaterialTheme.colorScheme.primary,
                         inactiveTrackColor = Color.White.copy(alpha = 0.24f)
-                    )
+                    ),
+                    thumb = {
+                        Image(
+                            painter = painterResource(id = R.drawable.car),
+                            contentDescription = "Car Filter Thumb",
+                            modifier = Modifier
+                                .width(8.dp)
+                                .height(4.dp)
+                                .offset(y = (-1.dp)), // Even smaller (tiny) car
+                            contentScale = ContentScale.Fit
+                        )
+                    }
                 )
             }
 
@@ -157,8 +169,25 @@ fun CarItem(car: Car, onClick: () -> Unit) {
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.width(16.dp))
+            } else {
+                // Fallback for missing images
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Placeholder",
+                        modifier = Modifier.size(40.dp),
+                        alpha = 0.3f,
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                }
             }
+            Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -167,17 +196,25 @@ fun CarItem(car: Car, onClick: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
-                Text(
-                    text = "Year: ${car.year} | ${car.horsepower} HP",
-                    fontSize = 14.sp,
-                    color = Color.White
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "${car.year} | ",
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        text = "${car.horsepower} HP",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = car.engine,
                     fontSize = 12.sp,
                     maxLines = 1,
-                    color = Color.White
+                    color = Color.White.copy(alpha = 0.6f)
                 )
             }
         }
