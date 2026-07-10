@@ -1,8 +1,8 @@
-# CarSpotters 🏎️
+# CarSpotters 
 
 **CarSpotters** is a high-performance Car Specifications Android application designed for automotive enthusiasts. Built with a modern tech stack and a sleek, high-contrast dark theme, it allows users to explore a curated catalog of 121 performance vehicles across different powertrain categories.
 
-## 🌟 Features
+## Features
 
 - **121 Car Catalog:** A comprehensive database featuring Gas, Hybrid, and Electric performance vehicles.
 - **High-Contrast Dark Theme:** A premium visual experience utilizing Dark/Medium Grey backgrounds with vibrant **Yellow (#FFD369)** accents.
@@ -11,7 +11,7 @@
 - **Detailed Specifications:** Deep dives into every car, including engine type, fuel efficiency, transmission, and horsepower.
 - **Dynamic Asset Loading:** Uses intelligent resource mapping to load car images dynamically based on the database model.
 
-## 🛠️ Technical Stack
+## Technical Stack
 
 - **Language:** Kotlin
 - **UI Framework:** Jetpack Compose (Declarative UI)
@@ -21,7 +21,7 @@
 - **Navigation:** Jetpack Compose Navigation for seamless transitions between screens.
 - **Theming:** Custom Material 3 integration with Gradient backgrounds.
 
-## 🏗️ Architecture
+##  Architecture
 
 The app follows clean architecture principles to ensure scalability and maintainability:
 
@@ -35,14 +35,14 @@ The app follows clean architecture principles to ensure scalability and maintain
     *   `CarViewModel`: Handles state management, horsepower filtering logic, and database pre-population.
     *   **Compose Screens:** Modularized screens (`MainMenu`, `CarList`, `CarDetail`) that react to StateFlow changes.
 
-## 🚀 Getting Started
+##  Getting Started
 
 1.  **Clone the project** into Android Studio.
 2.  **Gradle Sync:** Ensure all dependencies (Compose, Room, Navigation) are downloaded.
 3.  **Run:** Deploy to an emulator or physical device.
 4.  **Database Pre-population:** The app automatically populates the database with the full 121-car list upon the first launch.
 
-## 🎨 UI Highlight: The Custom Slider
+## UI Highlight: The Custom Slider
 One of the unique features is the **Horsepower Slider** found in the `CarListScreen`. It uses a custom `thumb` implementation:
 ```kotlin
 thumb = {
