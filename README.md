@@ -35,24 +35,3 @@ The app follows clean architecture principles to ensure scalability and maintain
     *   `CarViewModel`: Handles state management, horsepower filtering logic, and database pre-population.
     *   **Compose Screens:** Modularized screens (`MainMenu`, `CarList`, `CarDetail`) that react to StateFlow changes.
 
-##  Getting Started
-
-1.  **Clone the project** into Android Studio.
-2.  **Gradle Sync:** Ensure all dependencies (Compose, Room, Navigation) are downloaded.
-3.  **Run:** Deploy to an emulator or physical device.
-4.  **Database Pre-population:** The app automatically populates the database with the full 121-car list upon the first launch.
-
-## UI Highlight: The Custom Slider
-One of the unique features is the **Horsepower Slider** found in the `CarListScreen`. It uses a custom `thumb` implementation:
-```kotlin
-thumb = {
-    Image(
-        painter = painterResource(id = R.drawable.car),
-        modifier = Modifier.width(8.dp).height(4.dp).offset(y = (-1.dp))
-    )
-}
-```
-This provides a subtle, branded interaction point that fits the "CarSpotters" aesthetic perfectly.
-
----
-*Developed as a high-performance showcase of modern Android capabilities.*
